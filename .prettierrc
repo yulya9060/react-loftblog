@@ -20,4 +20,4 @@ overrides:
     printWidth: 80
 - files: '*.css'
   options:
-    parser: css
+parser: css
