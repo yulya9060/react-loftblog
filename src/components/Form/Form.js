@@ -2,25 +2,27 @@ import React, { Component } from "react";
 import "./Form.css";
 import Photo from "./assets/bond_approve.jpg";
 
-const getTypeInput=(type)=>{
-  switch(type){
-    case 'password':{
-      return "password"
+const getTypeInput = type => {
+  switch (type) {
+    case "password": {
+      return "password";
     }
-    default: return "text"
+    default:
+      return "text";
   }
-}
+};
 
-const errorText={
-  emptyFirstName:"Нужно указать имя",
-  wrongFirstName:"Имя указано не верно",
-  emptyLastName:"Нужно указать фамилию",
-  wrongLastName:"Фамилия указана не верно",
-  emptyPassword:"Нужно указать пароль",
-  wrongPassword:"Пароль указан не верно",
-}
+const errorText = {
+  emptyFirstName: "Нужно указать имя",
+  wrongFirstName: "Имя указано не верно",
+  emptyLastName: "Нужно указать фамилию",
+  wrongLastName: "Фамилия указана не верно",
+  emptyPassword: "Нужно указать пароль",
+  wrongPassword: "Пароль указан не верно"
+};
 
-const Field = ({value,name,error,handleChange,label}) => {
+const Field = ({ value, name, error, handleChange, label }) => {
+  console.log("field", error);
   return (
     <div className="field">
       <label htmlFor={name} className="field__label">
@@ -32,9 +34,11 @@ const Field = ({value,name,error,handleChange,label}) => {
         id={name}
         className={`field-input t-input-${name}`}
         value={value}
-        onChange={(event)=>handleChange(event)}
+        onChange={handleChange}
       />
-      <span className={`field__error field-error t-error-${name}`}>{error}</span>
+      <span className={`field__error field-error t-error-${name}`}>
+        {error}
+      </span>
     </div>
   );
 };
@@ -60,103 +64,106 @@ class Form extends Component {
   };
 
   handleChange = ({ target: { value, name } }) => {
-    console.log('dfdf',value,name)
-    if (value.length === 0) {
-      this.setState({
-        [name]: value,
-        error: { firstname: "", lastname: "", password: "" }
-      });
-    }
+    this.clearError();
+    this.setState({
+      [name]: value
+    });
   };
 
-  setErrorState=(name,value)=>{
-    this.setState({error:{...this.state.error,[name]:value}});
-  }
+  setErrorState = (name, value) => {
+    this.setState(state=>({error: {...state.error, [name]: value }}));
+  };
 
-  validateFirstName=(firstname)=>{
+  validateFirstName = firstname => {
+    let a = true;
     if (firstname.length === 0) {
-      this.setErrorState(firstname,errorText.emptyFirstName);
-      return false;
-    }
-    else if (firstname.length>0 && firstname !== 'Джеймс'){
-      this.setErrorState(firstname,errorText.wrongFirstName);
-      return false;
-    }
-    return true;
-  }
+      a = false;
+      this.setErrorState("firstname", errorText.emptyFirstName);
+    } else if (firstname.length > 0 && (firstname.toLowerCase() !== "james")) {
 
-  validateSecondName=(lastname)=>{
+      a = false;
+      this.setErrorState("firstname", errorText.wrongFirstName);
+    }
+    else {
+      this.setErrorState("firstname", "");
+  }
+    return a;
+  };
+
+  validateSecondName = lastname => {
+    let a = true;
     if (lastname.length === 0) {
-      this.setErrorState(lastname,errorText.emptyLastName);
-      return false;
+      a = false;
+      this.setErrorState("lastname", errorText.emptyLastName);
+    } else if (lastname.length > 0 && (lastname.toLowerCase() !== "bond")) {
+      a = false;
+      this.setErrorState("lastname", errorText.wrongLastName);
     }
-    else if (lastname.length>0 && lastname !== 'Бонд'){
-      this.setErrorState(lastname,errorText.wrongLastName);
-      return false;
-    }
-    return true;
+  else {
+    this.setErrorState("lastname", "");
   }
+  return a;
+  };
 
-  validatePassword=(password)=>{
+  validatePassword = password => {
+    let a = true;
     if (password.length === 0) {
-      this.setErrorState(password,errorText.emptyPassword);
-      return false;
+      a = false;
+      this.setErrorState("password", errorText.emptyPassword);
+    } else if (password.length > 0 && (password !== "007")) {
+      a = false;
+      this.setErrorState("password", errorText.wrongPassword);
     }
-    else if (password.length>0 && password !== '007'){
-      this.setErrorState(password,errorText.wrongPassword);
-      return false;
+    else {
+      this.setErrorState("password", "");
     }
-    return true;
-  }
+    return a;
+  };
+
   valid = () => {
     const { firstname, lastname, password } = this.state;
-    let field = "";
-    switch (field) {
-      case "firstname": {
-       return this.validateFirstName(firstname);
-        }
-      case "lastname": {
-        return this.validateSecondName(lastname);
-      }
-      case "password":{
-        return this.validatePassword(password);
-      }
-      default:
-    }
+    let first;
+    let last;
+    let passw;
+    first = this.validateFirstName(firstname);
+    last = this.validateSecondName(lastname);
+    passw = this.validatePassword(password);
+    return (first && last && passw)
   };
 
-  handleSubmit = () => {
+  handleSubmit = event => {
+    event.preventDefault();
     if (this.valid()) {
       this.setState({ agent007: true });
     }
   };
 
   render() {
-    const { firstname, lastname, password, agent007 ,error} = this.state;
+    const { firstname, lastname, password, agent007, error } = this.state;
     return (
       <div className="app-container">
         {agent007 ? (
-          <img src={Photo} alt="Джеймс Бонд" />
+          <img src={Photo} alt="Джеймс Бонд" className="t-bond-image"/>
         ) : (
           <form action="" className="form" onSubmit={this.handleSubmit}>
             <h1>Введите свои данные, агент</h1>
             <Field
               value={firstname}
-              name={firstname}
+              name={"firstname"}
               error={error.firstname}
-              handleChange={(event)=>this.handleChange(event)}
+              handleChange={this.handleChange}
               label={"Имя"}
             />
             <Field
               value={lastname}
-              name={lastname}
+              name={"lastname"}
               error={error.lastname}
               handleChange={this.handleChange}
               label={"Фамилия"}
             />
             <Field
               value={password}
-              name={password}
+              name={"password"}
               error={error.password}
               handleChange={this.handleChange}
               label={"Пароль"}
