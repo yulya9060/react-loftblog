@@ -13,12 +13,13 @@ class Show extends Component {
   }
 
 
-  componentDidMount() {
-    const { showId } = this.props;
-    if (showId){
-      this.getFilmContent(showId);
-    }
-  }
+ componentDidUpdate=(prevProps, prevState)=>{ 
+    const { showId } = this.props; 
+    if (prevProps.showId !== showId){ 
+      this.getFilmContent(showId); 
+    } 
+  }; 
+
   
   getFilmContent=(showId)=>{
     getShowInfo(showId)
@@ -37,7 +38,6 @@ class Show extends Component {
 
   render() {
     const { data } = this.state;
-    const { key,showId } = this.props;
     if (!data){
       return <p className="t-show-info">Шоу не выбрано</p>
     }
