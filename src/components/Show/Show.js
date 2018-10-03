@@ -12,21 +12,14 @@ class Show extends Component {
     };
   }
 
-  componentDidUpdate=(prevProps, prevState)=>{
-    const { showId } = this.state;
-    if (prevState.showId !== showId){
+
+  componentDidMount() {
+    const { showId } = this.props;
+    if (showId){
       this.getFilmContent(showId);
     }
-  };
-
- static getDerivedStateFromProps=(nextProps, prevState)=>{
-     if (nextProps.film){
-      return {showId:nextProps.film};
-     }
-     else return null;
-     
-  };
-
+  }
+  
   getFilmContent=(showId)=>{
     getShowInfo(showId)
       .then((response)=>{
@@ -44,8 +37,7 @@ class Show extends Component {
 
   render() {
     const { data } = this.state;
-    const { film } = this.props;
-    console.log('film',film);
+    const { key,showId } = this.props;
     if (!data){
       return <p className="t-show-info">Шоу не выбрано</p>
     }
