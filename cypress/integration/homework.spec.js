@@ -1,74 +1,64 @@
-it('Приложение запущено', () => {
-  cy.visit('/');
-});
-
-describe('Интеграционные тесты', () => {
+describe('Поведение приложения', () => {
   beforeEach(() => {
     cy.visit('/');
   });
 
-  describe('Валидация пустых полей', () => {
-    it('Показывает ошибку имени, если его нет', () => {
-      cy.get('.t-submit').click();
-
-      cy.get('.t-error-firstname').should('contain', 'Нужно указать имя');
-    });
-
-    it('Показывает ошибку фамилии, если ее нет', () => {
-      cy.get('.t-submit').click();
-
-      cy.get('.t-error-lastname').should('contain', 'Нужно указать фамилию');
-    });
-
-    it('Показывает ошибку пароля, если его нет', () => {
-      cy.get('.t-submit').click();
-
-      cy.get('.t-error-password').should('contain', 'Нужно указать пароль');
-    });
+  it("Если не выбран сериал, пристствует надписть 'Шоу не выбрано'", () => {
+    cy.get('.t-show-info').should('contain', 'Шоу не выбрано');
   });
 
-  describe('Валидация полей с ошибками', () => {
-    it('Показывает ошибку имени, если оно введено не верно', () => {
-      cy.get('.t-input-firstname').type('неправильное имя');
-      cy.get('.t-submit').click();
+  it('После загрузки house, информация с шоу', () => {
+    cy.get('.t-radio-input-house').click();
 
-      cy.get('.t-error-firstname').should('contain', 'Имя указано не верно');
-    });
-
-    it('Показывает ошибку фамилии, если она введена не верно', () => {
-      cy.get('.t-input-lastname').type('неправильная фамилия');
-      cy.get('.t-submit').click();
-
-      cy.get('.t-error-lastname').should('contain', 'Фамилия указана не верно');
-    });
-
-    it('Показывает ошибку фамилии, если она введена не верно', () => {
-      cy.get('.t-input-password').type('неправильный пароль');
-      cy.get('.t-submit').click();
-
-      cy.get('.t-error-password').should('contain', 'Пароль указан не верно');
-    });
+    cy.get('.t-show-name').should('contain', 'House');
+    cy.get('.t-show-genre').should('contain', 'Жанр: Drama, Mystery, Medical');
+    cy.get('.t-show-summary').should(
+      'contain',
+      "Sink your teeth into meaty drama and intrigue with House, FOX's take on mystery, where the villain is a medical malady and the hero is an irreverent, controversial doctor who trusts no one, least of all his patients."
+    );
   });
 
-  describe('Поведение ошибок', () => {
-    it('Скрыть ошибки, если начался ввод в одно из полей', () => {
-      cy.get('.t-submit').click();
+  it('После загрузки Santa Barbara, информация с шоу', () => {
+    cy.get('.t-radio-input-santaBarbara').click();
 
-      cy.get('.t-input-password').type('случайная надпись');
-
-      cy.get('.t-error-firstname').should('be.empty');
-      cy.get('.t-error-lastname').should('be.empty');
-      cy.get('.t-error-password').should('be.empty');
-    });
+    cy.get('.t-show-name').should('contain', 'Santa Barbara');
+    cy.get('.t-show-genre').should('contain', 'Жанр: Drama');
+    cy.get('.t-show-summary').should(
+      'contain',
+      'The show focused on the wealthy and powerful Capwells in Santa Barbara. Scandals, sex, affairs, murder and romance was just a few ingredienses to describe the saucy lifestyle in town.'
+    );
   });
-  describe('Валидация правильной формы', () => {
-    it('Показывает одобрение Бонда, если все верно', () => {
-      cy.get('.t-input-firstname').type('james');
-      cy.get('.t-input-lastname').type('bond');
-      cy.get('.t-input-password').type('007');
-      cy.get('.t-submit').click();
 
-      cy.get('.t-bond-image');
-    });
+  it('После загрузки The Big Bang Theory, информация с шоу', () => {
+    cy.get('.t-radio-input-bigBang').click();
+
+    cy.get('.t-show-name').should('contain', 'The Big Bang Theory');
+    cy.get('.t-show-genre').should('contain', 'Жанр: Comedy');
+    cy.get('.t-show-summary').should(
+      'contain',
+      `The Big Bang Theory is a comedy about brilliant physicists, Leonard and Sheldon, who are the kind of "beautiful minds" that understand how the universe works. But none of that genius helps them interact with people, especially women. All this begins to change when a free-spirited beauty named Penny moves in next door. Sheldon, Leonard's roommate, is quite content spending his nights playing Klingon Boggle with their socially dysfunctional friends, fellow Cal Tech scientists Wolowitz and Koothrappali. However, Leonard sees in Penny a whole new universe of possibilities... including love.`
+    );
+  });
+  it('Если нажать несколько раз разные иконки шоу, каждй раз информация будет загружаться об этом шоу', () => {
+    cy.get('.t-radio-input-bigBang').click();
+    cy.get('.t-show-name').should('contain', 'The Big Bang Theory');
+    cy.get('.t-radio-input-santaBarbara').click();
+    cy.get('.t-show-name').should('contain', 'Santa Barbara');
+    cy.get('.t-radio-input-house').click();
+    cy.get('.t-show-name').should('contain', 'House');
+    cy.get('.t-radio-input-bigBang').click();
+    cy.get('.t-show-name').should('contain', 'The Big Bang Theory');
+    cy.get('.t-radio-input-santaBarbara').click();
+    cy.get('.t-show-name').should('contain', 'Santa Barbara');
+    cy.get('.t-radio-input-santaBarbara').click();
+    cy.get('.t-show-name').should('contain', 'Santa Barbara');
+    cy.get('.t-radio-input-bigBang').click();
+    cy.get('.t-show-name').should('contain', 'The Big Bang Theory');
+    cy.get('.t-radio-input-house').click();
+    cy.get('.t-show-name').should('contain', 'House');
+    cy.get('.t-radio-input-santaBarbara').click();
+    cy.get('.t-show-name').should('contain', 'Santa Barbara');
+    cy.get('.t-radio-input-bigBang').click();
+    cy.get('.t-show-name').should('contain', 'The Big Bang Theory');
   });
 });
